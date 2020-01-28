@@ -43,7 +43,7 @@ for (const field of ['ALLOW_THREADS', 'AxisError', 'BUFSIZE', 'CLIP', 'ComplexWa
     Tensor[field] = async function (...args) {
         args = args.map(Tensor.replaceReference)
 
-        const response = await fetch(`${Tensor.API.static}`, {
+        const response = await fetch(Tensor.API.static, {
             method: 'GET',
             headers: {
                 field: JSON.stringify(field),
@@ -67,7 +67,7 @@ for (const field of ['T', '__abs__', '__add__', '__and__', '__array__', '__array
     Tensor.prototype[field] = async function (...args) {
         args = args.map(Tensor.replaceReference)
 
-        const response = await fetch(`${Tensor.API.instance}`, {
+        const response = await fetch(Tensor.API.instance, {
             method: 'GET',
             headers: {
                 field: JSON.stringify(field),

@@ -48,7 +48,7 @@ def instance_fields():
 
     result = attribute(*clean_args) if callable(attribute) else attribute
 
-    if isinstance(result, np.ndarray):
+    if isinstance(result, (np.ndarray, np.generic)):
         return make_array_response(result)
 
     return attribute
@@ -65,7 +65,7 @@ def static_fields():
 
     result = attribute(*clean_args) if callable(attribute) else attribute
 
-    if isinstance(result, np.ndarray):
+    if isinstance(result, (np.ndarray, np.generic)):
         return make_array_response(result)
 
-    return result
+    return str(result)
