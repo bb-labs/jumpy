@@ -52,7 +52,7 @@ class Tensor {
             return value.name
 
         if (value.constructor === Tensor)
-            return value.header.address
+            return { address: value.header.address }
 
         return value
     }

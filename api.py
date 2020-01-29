@@ -24,7 +24,7 @@ def invoke():
             args[i] = cache[arg['address']]
 
     # Set the context depending on the `this` argument
-    context = cache[this] if isinstance(this, int) else np
+    context = cache[this['address']] if isinstance(this, dict) else np
 
     # Get the numpy attribute of interest
     attribute = getattr(context, field)
