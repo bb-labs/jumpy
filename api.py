@@ -40,14 +40,14 @@ def instance_fields():
 
     clean_args = lookup_arrays(args)
 
-    array = cache[this['address']]
+    array = cache[this]
     attribute = getattr(array, field)
 
     result = attribute(*clean_args) if callable(attribute) else attribute
 
     print('-------------INSTANCE--------------')
-    print(field)
     print(this)
+    print(field)
     print(clean_args)
     print(result)
 
@@ -72,7 +72,7 @@ def static_fields():
     print(field)
     print(clean_args)
     print(result)
-    
+
     if isinstance(result, (np.ndarray, np.generic)):
         return make_array_response(result)
 
