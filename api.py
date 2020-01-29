@@ -15,15 +15,12 @@ def make_array_response(array):
 
     cache[address] = array
 
-    return make_response(array.tobytes(), {
-        'Access-Control-Expose-Headers': 'metadata',
-        'metadata': json.dumps({
-            'address': address,
-            'size': array.size,
-            'shape': array.shape,
-            'dtype': str(array.dtype),
-            'strides': array.strides,
-        })
+    return json.dumps({
+        'address': address,
+        'size': array.size,
+        'shape': array.shape,
+        'dtype': str(array.dtype),
+        'strides': array.strides,
     })
 
 
@@ -43,15 +40,21 @@ def instance_fields():
 
     clean_args = lookup_arrays(args)
 
-    array = cache[this.get('address')]
+    array = cache[this['address']]
     attribute = getattr(array, field)
 
     result = attribute(*clean_args) if callable(attribute) else attribute
 
+    print('-------------INSTANCE--------------')
+    print(field)
+    print(this)
+    print(clean_args)
+    print(result)
+
     if isinstance(result, (np.ndarray, np.generic)):
         return make_array_response(result)
 
-    return attribute
+    return json.dumps(result)
 
 
 @app.route("/static", methods=["GET"])
@@ -65,7 +68,12 @@ def static_fields():
 
     result = attribute(*clean_args) if callable(attribute) else attribute
 
+    print('----------STATIC-----------------')
+    print(field)
+    print(clean_args)
+    print(result)
+    
     if isinstance(result, (np.ndarray, np.generic)):
         return make_array_response(result)
 
-    return str(result)
+    return json.dumps(result)
