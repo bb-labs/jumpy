@@ -1,13 +1,13 @@
 import fields from './fields.mjs'
 
 class Tensor {
-    constructor(header) { this.header = header }
+    constructor(data, header) {
+        this.data = data
+        this.header = header
+    }
 
     /** Numpy API */
-    static API = {
-        static: 'http://localhost:5000/static',
-        instance: 'http://localhost:5000/instance',
-    }
+    static API = 'http://localhost:5000/invoke'
 
     /** Numpy Types */
     static int8 = class int8 extends Int8Array { }
@@ -26,19 +26,23 @@ class Tensor {
     /** Numpy Generic Invoker */
     static invoker(field) {
         return async function (...args) {
-            const api = this === Tensor
-                ? Tensor.API.static
-                : Tensor.API.instance
-
-            const response = await fetch(api, {
+            const response = await fetch(Tensor.API, {
                 headers: {
                     args: JSON.stringify(args, Tensor.clean),
                     this: JSON.stringify(this, Tensor.clean),
-                    field: JSON.stringify(field, Tensor.clean),
+                    field: JSON.stringify(field),
                 }
             })
 
-            return 'Pending'
+            const content = response.headers.get('content-type')
+
+            if (content === 'array')
+                return new Tensor(null, await response.json())
+
+            if (content === 'bytes') // implies `this` is Tensor
+                return this.data = new Tensor[this.header.dtype](await response.arrayBuffer())
+
+            return response.json()
         }
     }
 
@@ -48,7 +52,7 @@ class Tensor {
             return value.name
 
         if (value.constructor === Tensor)
-            return value
+            return value.header.address
 
         return value
     }

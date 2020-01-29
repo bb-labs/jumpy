@@ -8,72 +8,56 @@ app = Flask(__name__)
 CORS(app)
 
 cache = {}
+DEBUG = False
 
 
-def make_array_response(array):
-    address, _ = array.__array_interface__['data']
-
-    cache[address] = array
-
-    return json.dumps({
-        'address': address,
-        'size': array.size,
-        'shape': array.shape,
-        'dtype': str(array.dtype),
-        'strides': array.strides,
-    })
-
-
-def lookup_arrays(args):
-    for i, arg in enumerate(args):
-        if isinstance(arg, dict) and arg.get('address'):
-            args[i] = cache[arg['address']]
-
-    return args
-
-
-@app.route("/instance", methods=["GET"])
-def instance_fields():
+@app.route("/invoke", methods=["GET"])
+def invoke():
+    # Each numpy call has arguments, a context, and a field
     args = json.loads(request.headers.get('args'))
     this = json.loads(request.headers.get('this'))
     field = json.loads(request.headers.get('field'))
 
-    clean_args = lookup_arrays(args)
+    # Lookup array arguments by their addresses
+    for i, arg in enumerate(args):
+        if isinstance(arg, dict) and arg.get('address'):
+            args[i] = cache[arg['address']]
 
-    array = cache[this]
-    attribute = getattr(array, field)
+    # Set the context depending on the `this` argument
+    context = cache[this] if isinstance(this, int) else np
 
-    result = attribute(*clean_args) if callable(attribute) else attribute
+    # Get the numpy attribute of interest
+    attribute = getattr(context, field)
 
-    print('-------------INSTANCE--------------')
-    print(this)
-    print(field)
-    print(clean_args)
-    print(result)
+    # Call the numpy field if it's a method, otherwise just get its value
+    result = attribute(*args) if callable(attribute) else attribute
 
+    if DEBUG:
+        print('-------------{}--------------'.format(field))
+        print(this)
+        print(args)
+        print(result)
+
+    # If the result is of type np.array, cache it, and send the header back
     if isinstance(result, (np.ndarray, np.generic)):
-        return make_array_response(result)
+        address, _ = result.__array_interface__['data']
+        cache[address] = result
 
-    return json.dumps(result)
+        return make_response(json.dumps({
+            'address': address,
+            'size': result.size,
+            'shape': result.shape,
+            'dtype': str(result.dtype),
+            'strides': result.strides,
+        }), {
+            'content-type': "array"
+        })
 
+    # If the result is of type bytes, send it over.
+    if isinstance(result, bytes):
+        return make_response(result, {
+            'content-type': "bytes",
+        })
 
-@app.route("/static", methods=["GET"])
-def static_fields():
-    args = json.loads(request.headers.get('args'))
-    field = json.loads(request.headers.get('field'))
-
-    clean_args = lookup_arrays(args)
-
-    attribute = getattr(np, field)
-
-    result = attribute(*clean_args) if callable(attribute) else attribute
-
-    print('----------STATIC-----------------')
-    print(field)
-    print(clean_args)
-    print(result)
-
-    if isinstance(result, (np.ndarray, np.generic)):
-        return make_array_response(result)
-
+    # Otherwise just dump the json
     return json.dumps(result)
