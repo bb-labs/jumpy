@@ -13,10 +13,10 @@ echo ~
 
 # terraform init
 
-# terraform plan \
-# -out=numpy-deployment-plan \
-# -input=false \
-# -var="lambda_path=$root_dir/numpy" \
+terraform plan \
+-out=numpy-deployment-plan \
+-input=false \
+-var="lambda_path=$root_dir/jumpy" \
 
 # terraform apply \
 # -input=false \
