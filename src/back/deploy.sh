@@ -7,8 +7,10 @@ echo -e "[default]\naws_access_key_id = $1\naws_secret_access_key = $2" >~/.aws/
 
 zip -r package.zip .
 
+ls -lah
+
 aws lambda create-function \
-    --function-name tester23 \
+    --function-name numpy-endpoint \
     --runtime python3.7 \
     --zip-file fileb://package.zip \
     --handler lambda_function.lambda_handler \
