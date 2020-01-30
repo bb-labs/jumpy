@@ -1,5 +1,5 @@
-# import numpy as np
-# import json
+import numpy as np
+import json
 
 cache = {}
 DEBUG = False
@@ -9,7 +9,11 @@ def lambda_handler(event, context):
     print(event)
     print(context)
 
-    return "Bubby"
+    return {
+        'status': 200,
+        'body': np.random.rand(5, 5).tolist()
+    }
+    
     # Each numpy call has arguments, a context, and a field
     # args = json.loads(request.headers.get('args'))
     # this = json.loads(request.headers.get('this'))
