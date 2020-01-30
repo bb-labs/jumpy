@@ -1,0 +1,19 @@
+---
+resources:
+  - name: jumpy
+    type: git
+    source:
+      uri: https://github.com/bb-labs/jumpy.git
+      branch: master
+
+jobs:
+  - name: job-initialize
+    plan:
+      - get: jumpy
+        trigger: true
+      - task: task-create-server
+        file: jumpy/deploy/task/create-server.yml
+        params:
+          AWS_ACCESS_KEY_ID: ((AWS_ACCESS_KEY_ID))
+          AWS_SECRET_ACCESS_KEY: ((AWS_SECRET_ACCESS_KEY))
+          AWS_DEFAULT_REGION: ((AWS_DEFAULT_REGION))
