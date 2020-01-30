@@ -3,20 +3,21 @@
 root_dir=$(pwd)
 
 echo $root_dir
+echo ~
 
-pip install numpy
-cp -r /var/lang/lib/python3.6/site-packages/numpy $root_dir/jumpy
+# pip install numpy
+# cp -r /var/lang/lib/python3.6/site-packages/numpy $root_dir/jumpy
 
-cd $root_dir/jumpy/deploy
-mv ~/.terraform .
+# cd $root_dir/jumpy/deploy
+# mv ~/.terraform .
 
-terraform init
+# terraform init
 
-terraform plan \
--out=numpy-deployment-plan \
--input=false \
--var="lambda_path=$root_dir/numpy" \
+# terraform plan \
+# -out=numpy-deployment-plan \
+# -input=false \
+# -var="lambda_path=$root_dir/numpy" \
 
-terraform apply \
--input=false \
-numpy-deployment-plan
+# terraform apply \
+# -input=false \
+# numpy-deployment-plan

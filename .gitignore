@@ -3,3 +3,4 @@ node_modules
 credentials.yml
 docker-compose.yml
 .dockerignore
+.terraform
