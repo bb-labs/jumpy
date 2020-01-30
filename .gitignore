@@ -4,3 +4,4 @@ credentials.yml
 docker-compose.yml
 .dockerignore
 .terraform
+.DS_Store
