@@ -1,4 +1,3 @@
-import fields from './fields.mjs'
 
 class Tensor {
     constructor(data, header) {
@@ -22,6 +21,19 @@ class Tensor {
     static float64 = class float64 extends Float64Array { }
     static complex64 = class complex64 extends Float32Array { }
     static complex128 = class complex128 extends Float64Array { }
+
+    /** Numpy Fields */
+    static populate(fields) {
+        /** Static Fields */
+        for (const field of fields.static)
+            Tensor[field] = Tensor.invoker(field)
+
+        /** Instance Fields */
+        for (const field of fields.instance)
+            Tensor.prototype[field] = Tensor.invoker(field)
+
+        return Tensor
+    }
 
     /** Numpy Generic Invoker */
     static invoker(field) {
@@ -58,12 +70,4 @@ class Tensor {
     }
 }
 
-/** Numpy Static Fields */
-for (const field of fields.static)
-    Tensor[field] = Tensor.invoker(field)
-
-/** Numpy Instance Fields */
-for (const field of fields.instance)
-    Tensor.prototype[field] = Tensor.invoker(field)
-
-export default Tensor
+export default Tensor.populate(/** Fetch Fields */)
