@@ -24,6 +24,8 @@ def lambda_handler(event, context):
     # Each numpy call has arguments, a context, and a field
     body = json.dumps(event['body'])
 
+    print(body)
+
     args = body['args']
     this = body['this']
     field = body['field']

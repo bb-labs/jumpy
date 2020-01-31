@@ -7,7 +7,7 @@ class Tensor {
     }
 
     /** Numpy API */
-    static API = 'https://et6awl2o94.execute-api.us-west-2.amazonaws.com/default/te'
+    static API = 'https://tz7fg5py36.execute-api.us-west-2.amazonaws.com/default/numpy-endpoint'
 
     /** Numpy Types */
     static int8 = class int8 extends Int8Array { }
