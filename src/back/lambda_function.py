@@ -12,9 +12,10 @@ def lambda_handler(event, context):
 
     return {
         'statusCode': 200,
-        'body': 'shhdance'
+        "Access-Control-Allow-Origin" : "*",
+        'body': 'celebrate good times'
     }
-    
+
     # Each numpy call has arguments, a context, and a field
     # args = json.loads(request.headers.get('args'))
     # this = json.loads(request.headers.get('this'))

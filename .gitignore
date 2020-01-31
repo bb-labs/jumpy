@@ -5,3 +5,5 @@ docker-compose.yml
 .dockerignore
 .terraform
 .DS_Store
+fields.mjs
+*.html
