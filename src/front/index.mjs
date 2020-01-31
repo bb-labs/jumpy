@@ -1,3 +1,4 @@
+import fields from './fields.mjs'
 
 class Tensor {
     constructor(data, header) {
@@ -6,7 +7,7 @@ class Tensor {
     }
 
     /** Numpy API */
-    static API = 'http://localhost:5000/invoke'
+    static API = 'https://et6awl2o94.execute-api.us-west-2.amazonaws.com/default/te'
 
     /** Numpy Types */
     static int8 = class int8 extends Int8Array { }
@@ -22,28 +23,14 @@ class Tensor {
     static complex64 = class complex64 extends Float32Array { }
     static complex128 = class complex128 extends Float64Array { }
 
-    /** Numpy Fields */
-    static populate(fields) {
-        /** Static Fields */
-        for (const field of fields.static)
-            Tensor[field] = Tensor.invoker(field)
-
-        /** Instance Fields */
-        for (const field of fields.instance)
-            Tensor.prototype[field] = Tensor.invoker(field)
-
-        return Tensor
-    }
-
     /** Numpy Generic Invoker */
     static invoker(field) {
         return async function (...args) {
+            console.log(JSON.stringify({ args, field, this: this }, Tensor.clean))
+
             const response = await fetch(Tensor.API, {
-                headers: {
-                    args: JSON.stringify(args, Tensor.clean),
-                    this: JSON.stringify(this, Tensor.clean),
-                    field: JSON.stringify(field),
-                }
+                method: 'POST',
+                body: JSON.stringify({ args, field, this: this }, Tensor.clean)
             })
 
             const content = response.headers.get('content-type')
@@ -70,4 +57,12 @@ class Tensor {
     }
 }
 
-export default Tensor.populate(/** Fetch Fields */)
+/** Numpy Static Fields */
+for (const field of fields.static)
+    Tensor[field] = Tensor.invoker(field)
+
+/** Numpy Instance Fields */
+for (const field of fields.instance)
+    Tensor.prototype[field] = Tensor.invoker(field)
+
+export default Tensor
