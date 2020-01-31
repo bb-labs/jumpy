@@ -22,7 +22,7 @@ def lambda_handler(event, context):
     print(context)
 
     # Each numpy call has arguments, a context, and a field
-    body = json.dumps(event['body'])
+    body = json.loads(event['body'])
 
     print(body)
 
