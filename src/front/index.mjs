@@ -26,8 +26,6 @@ class Tensor {
     /** Numpy Generic Invoker */
     static invoker(field) {
         return async function (...args) {
-            console.log(JSON.stringify({ args, field, this: this }, Tensor.clean))
-
             const response = await fetch(Tensor.API, {
                 method: 'POST',
                 body: JSON.stringify({ args, field, this: this }, Tensor.clean)

@@ -24,8 +24,6 @@ def lambda_handler(event, context):
     # Each numpy call has arguments, a context, and a field
     body = json.loads(event['body'])
 
-    print(body)
-
     args = body['args']
     this = body['this']
     field = body['field']
@@ -43,11 +41,6 @@ def lambda_handler(event, context):
 
     # Call the numpy field if it's a method, otherwise just get its value
     result = attribute(*args) if callable(attribute) else attribute
-
-    print('-------------{}--------------'.format(field))
-    print(this)
-    print(args)
-    print(result)
 
     # If the result is of type np.array, cache it, and send the header back
     if isinstance(result, (np.ndarray, np.generic)):
