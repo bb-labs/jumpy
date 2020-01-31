@@ -7,7 +7,7 @@ class Tensor {
     }
 
     /** Numpy API */
-    static API = 'https://tz7fg5py36.execute-api.us-west-2.amazonaws.com/default/numpy-endpoint'
+    static API = 'http://localhost:5000/invoke'
 
     /** Numpy Types */
     static int8 = class int8 extends Int8Array { }
@@ -27,8 +27,11 @@ class Tensor {
     static invoker(field) {
         return async function (...args) {
             const response = await fetch(Tensor.API, {
-                method: 'POST',
-                body: JSON.stringify({ args, field, this: this }, Tensor.clean)
+                headers: {
+                    args: JSON.stringify(args, Tensor.clean),
+                    this: JSON.stringify(this, Tensor.clean),
+                    field: JSON.stringify(field),
+                }
             })
 
             const content = response.headers.get('content-type')
